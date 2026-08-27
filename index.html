@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>말랑 캘린더</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,9 +48,13 @@
 
   .app{
     height:100vh;
+    height:100dvh;
     display:flex;
     flex-direction:column;
     padding:clamp(6px,1vh,16px) clamp(14px,2.6vw,32px);
+    padding-left:max(clamp(14px,2.6vw,32px), env(safe-area-inset-left));
+    padding-right:max(clamp(14px,2.6vw,32px), env(safe-area-inset-right));
+    padding-bottom:max(clamp(6px,1vh,16px), env(safe-area-inset-bottom));
     gap:clamp(2px,.5vh,6px);
   }
 
@@ -352,7 +356,7 @@
     border:1px solid var(--border);
     color:var(--text);
     font-family:'Nunito',sans-serif;
-    font-size:14px;
+    font-size:16px;
     font-weight:600;
     padding:10px 12px;
     border-radius:10px;
@@ -400,6 +404,10 @@
     font-size:clamp(9.5px,.85vw,11.5px);
     color:var(--text-faint);
   }
+  @media (max-width:640px){
+    .desktop-hint{ display:none; }
+  }
+  .no-fullscreen #fullscreen-btn{ display:none; }
 
   .sync-badge{
     position:fixed;
@@ -437,7 +445,7 @@
 
   <div class="weekday-row" id="weekday-row"></div>
   <div class="grid" id="grid"></div>
-  <div class="footer-hint">날짜를 클릭하면 일정을 추가할 수 있어요 · ← → 로 월 이동 · F 또는 ⛶ 로 전체화면</div>
+  <div class="footer-hint">날짜를 클릭하면 일정을 추가할 수 있어요<span class="desktop-hint"> · ← → 로 월 이동 · F 또는 ⛶ 로 전체화면</span></div>
 </div>
 
 <div class="modal-backdrop hidden" id="modal-backdrop">
@@ -759,6 +767,11 @@
   // ---------- fullscreen ----------
   var fsBtn = document.getElementById("fullscreen-btn");
   var docEl = document.documentElement;
+
+  var fullscreenSupported = !!(docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen);
+  if(!fullscreenSupported){
+    document.body.classList.add("no-fullscreen");
+  }
 
   function isFullscreen(){
     return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
